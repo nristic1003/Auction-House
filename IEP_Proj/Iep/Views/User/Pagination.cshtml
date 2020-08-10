@@ -1,0 +1,56 @@
+@model PaginatedList<Iep.Models.Database.Transaction>
+@{
+    ViewData["Title"] = "Pagination";
+}
+
+<div class="row">
+<h1>Your Transactions</h1>
+</div>
+
+
+<div class="row">
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">IdT</th>
+      <th scope="col">Date</th>
+      <th scope="col">IdUser</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+     @foreach (var item in Model)
+    {
+  
+    <tr>
+        <th scope="row"></th>
+        <td>@item.idT</td>
+        <td>@item.date</td>
+        <td>@item.idUser</td>
+     </tr>
+}
+  </tbody>
+</table>
+    
+
+
+
+
+
+
+</div>
+@{
+    var prevDisabled = !Model.PreviousPage ? "disabled": "";
+     var nextDisabled = !Model.NextPage ? "disabled": "";
+}
+<a asp-action = "Pagination"
+    asp-route-pageNumber = "@(Model.PageIndex-1)"
+    class = "btn btn-default @prevDisabled">
+    Previous
+    </a>
+    <a asp-action = "Pagination"
+    asp-route-pageNumber = "@(Model.PageIndex+1)"
+    class = "btn btn-default @nextDisabled">
+    Next
+    </a>

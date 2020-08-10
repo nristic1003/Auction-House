@@ -1,0 +1,69 @@
+@model Iep.Models.Database.User;
+@{
+    ViewData["Title"] = "UserInfo";
+}
+
+
+<table>
+   <div class="row">
+    <table class="table table-responsive-xl">
+    <thead>
+        <tr>
+        <th scope="col" colspan="3" style="font-size: 25px;">Information about  @Model.firstName</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td rowspan="7" width="200">
+                <img src="~/images/avatar.png" width="200"/>
+            </td>
+        </tr>
+
+        <tr>
+        <td>Username</td>
+        <td>@Model.UserName</td>
+        </tr>
+
+        <tr>
+        <td>First Name</td>
+        <td>@Model.firstName</td>
+        </tr>
+
+        <tr>
+        <td>Last Name</td>
+        <td>@Model.lastName</td>
+        </tr>
+
+        <tr>
+        <td>Gender</td>
+        <td>@Model.gender</td>
+        </tr>
+
+        <tr>
+        <td>Email</td>
+        <td>@Model.Email</td>
+        </tr>
+
+        <tr>
+        <td>Tokens</td>
+        <td>@Model.tokens</td>
+        </tr>
+        <tr>
+            <td> <a asp-controller="User" asp-action="ChangePassword"> Change Password </a></td>
+            <td colspan="2">
+                
+                 <a asp-controller="User" asp-action="EditUser">
+            <button class="btn btn-primary">Edit user info</button>
+    </a></td>
+        </tr>
+          <tr>
+            <td> <a asp-controller="User" asp-action="Pagination"> My Transactions </a></td>
+           
+        </tr>
+
+    </tbody>
+    </table>
+</div>
+</table>
+

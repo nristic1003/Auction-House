@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row mb-2">
+    <div class="col-sm-12">
+      <div class="d-flex justify-content-center "><h1> Auction House</h1></div>  
+    </div>
+
+</div>
+<div class="container d-flex justify-content-center mb-2 ">
+  
+ <div class="input-group col-sm-7 input-group-lg">
+       
+      <input type="text" class="form-control mr-4" placeholder="Type your text for search here...">
+   
+     
+       
+    </div>
+   
+   
+</div>
+<div class="row ">
+    <div class="col-sm-12">
+        <div class="d-flex justify-content-center">
+             <a asp-controller="Home" asp-action="Search">
+            <button class="btn btn-primary">Search</button>
+    </a>
+     </div>
+    </div>
+     
+  
+</div>
+
+<div class="row ">
+  
+    <h4>Search Filters</h4>
+</div>
+    <div class="row">
+       <div class="d-flex justify-content-start">
+         <div class="col-sm-5">
+        <label align="center"> Price:</label>
+        <div class="input-group input-group-sm">
+            <input type="number" class = "mb-1" placeholder="min" min="0" style="width: 100px;">
+            
+        <input class = "input-sm" type="number" placeholder="max" min ="0" style="width: 100px;">
+        </div>
+       
+        </div>
+</div>
+</div>
+    <div class="row">
+       
+         <div class="col-sm-1">
+             <div class="input-group mb-3">
+    <label align="center"> State:</label>
+    <div class="input-group input-group-sm">
+        <select  class="custom-select" id="inputGroupSelect01" style="width: 100px;">
+    <option selected>Choose...</option>
+    <option value="1">Ready</option>
+    <option value="2">Open</option>
+    <option value="3">Expired</option>
+ 
+  </select>
+    </div>
+    <div class="col-sm-10"></div>
+  
+</div>
+       
+        </div>
+</div>
