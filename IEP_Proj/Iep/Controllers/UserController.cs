@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.Security.AccessControl;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Iep.Models.Database;
@@ -9,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using Iep.Models;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Iep.Controllers{
 
@@ -47,11 +51,40 @@ namespace Iep.Controllers{
         }
        
         [Authorize]
+        public async Task<IActionResult> myAuctions(int pageNumber = 1)
+        {
+          User user = await this.userManager.GetUserAsync(base.User);
+             var data = context.auction.Where(a =>a.owner.Id == user.Id);  
+         
+            return View(await PaginatedList< Auction>.CreateAsync(data, pageNumber,4));
+        }
+      
+        public    IActionResult editAuction(int? id)
+        {
+            Auction auction =   this.context.auction.Find(id);
+            if(auction!=null)
+            {
+             AuctionModel aucModel = new AuctionModel(){
+                name = auction.name,
+                description = auction.description,
+                startPrice = auction.startPrice,
+                createDate = auction.createDate,
+                openDate = auction.openDate,
+                closeDate = auction.closeDate,
+            };
+            return View(aucModel);
+            }else{
+               return RedirectToAction(nameof (Index) , "HomeController/Index");
+            }
+         
+        }
+        [Authorize]
         public  IActionResult ChangePassword()
         {
             ChangePasswordView cp = new ChangePasswordView();
             return View(cp);
         }
+      
         [HttpPost]
         [Authorize]
         public  async Task<IActionResult> ChangePassword(ChangePasswordView model)
@@ -80,6 +113,46 @@ namespace Iep.Controllers{
               }
             
         }
+
+        [Authorize]
+        public IActionResult NewAuction()
+        {
+            AuctionModel au = new AuctionModel();
+            return View(au);
+        }
+
+       [HttpPost]
+       [ValidateAntiForgeryToken]
+        [Authorize]
+          public async Task<IActionResult> NewAuction(AuctionModel model)
+        {
+           if(!ModelState.IsValid)
+           {
+               return View(model);
+           }
+             User user = await this.userManager.GetUserAsync(base.User);
+           using (BinaryReader reader = new BinaryReader(model.file.OpenReadStream()))
+           {
+               Auction aucMod = new Auction()
+               {
+                   name = model.name,
+                   description = model.description,
+                   image = reader.ReadBytes(Convert.ToInt32(reader.BaseStream.Length)),
+                   createDate = DateTime.UtcNow,
+                   startPrice = model.startPrice,
+                   currentPrice = model.startPrice,
+                   openDate = model.openDate,
+                   closeDate = model.closeDate,
+                   state = "DRAFT",
+                   owner = user
+
+               };
+               await this.context.auction.AddAsync(aucMod);
+               await this.context.SaveChangesAsync();
+           }
+           return RedirectToAction( nameof(UserController.NewAuction));
+        }
+
         public async Task<IActionResult> Pagination(int pageNumber =1)
         {
              User user = await this.userManager.GetUserAsync(base.User);

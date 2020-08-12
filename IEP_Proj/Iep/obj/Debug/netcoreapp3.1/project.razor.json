@@ -20526,6 +20526,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\NewAuction.cshtml",
+      "TargetPath": "Views\\User\\NewAuction.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\UserInfo.cshtml",
       "TargetPath": "Views\\User\\UserInfo.cshtml",
       "FileKind": "mvc"
@@ -20543,6 +20548,21 @@
     {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Shared\\_Layout.cshtml",
       "TargetPath": "Views\\Shared\\_Layout.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\myAuctions.cshtml",
+      "TargetPath": "Views\\User\\myAuctions.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\editAuction.cshtml",
+      "TargetPath": "Views\\User\\editAuction.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Shared\\AddAuction.cshtml",
+      "TargetPath": "Views\\Shared\\AddAuction.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -20588,6 +20608,11 @@
     {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Home\\Privacy.cshtml",
       "TargetPath": "Views\\Home\\Privacy.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Home\\AuctionPreview.cshtml",
+      "TargetPath": "Views\\Home\\AuctionPreview.cshtml",
       "FileKind": "mvc"
     },
     {

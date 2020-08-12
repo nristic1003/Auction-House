@@ -372,3 +372,8 @@ C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\To
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\UserToken.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\ChangePassword.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\Pagination.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\AddAuction.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\NewAuction.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Home\AuctionPreview.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\myAuctions.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\editAuction.cshtml.g.cs

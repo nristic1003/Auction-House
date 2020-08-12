@@ -1,0 +1,48 @@
+@model PaginatedList<Iep.Models.Database.Auction>
+
+@{
+    ViewData["Title"] = "My Auctions";
+}
+
+
+<div class="row">
+    <div class="disabled">dsasds</div>
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Open Date
+                </th>
+                <th>
+                    State
+                </th>
+                <th colspan="2">
+                    Options
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.name
+                    </td>
+                    <td>
+                        @item.openDate
+                    </td>
+                    <td>
+                        @item.state
+                    </td>  
+                    <td>
+                     <a asp-action="editAuction" asp-route-id = "@item.Id"> Edit </a>          </td>
+                      <td>
+                       <a asp-action="deleteAuction" asp-route-id = "@item.Id"> Delete </a>
+                    </td>    
+                </tr>
+
+            }
+        </table>
+    </div>
+</div>

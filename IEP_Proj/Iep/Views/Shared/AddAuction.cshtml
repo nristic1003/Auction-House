@@ -1,0 +1,11 @@
+@using Microsoft.AspNetCore.Identity;
+@using Iep.Models.Database;
+@using System.Security.Claims;
+
+
+@inject SignInManager<User> signInManager;
+
+ @if(signInManager.IsSignedIn(User)){
+  <a class="nav-link" asp-controller="User" asp-action="NewAuction">AddAuction </a>
+ }
+ 
