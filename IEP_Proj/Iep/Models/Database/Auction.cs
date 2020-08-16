@@ -44,6 +44,7 @@ namespace Iep.Models.Database{
         public User owner {get; set;}
 
         public ICollection<Bids> BidList{get; set;}
+        
 
 
     }

@@ -4,8 +4,10 @@
 
 
 @inject SignInManager<User> signInManager;
+    
 
  @if(signInManager.IsSignedIn(User)){
   <a class="nav-link" asp-controller="User" asp-action="Tokens">Buy Tokens </a>
+  
  }
  

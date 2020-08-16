@@ -6,14 +6,8 @@ var eventID;
 var x =0;
 $(document).ready(function() {
 
-    $(".edit").click(function(event)
-    {
-        alert("https://localhost:5001/User/editAuction?auctionId=" + event.target.id);    
-        $(location).attr('href',  "https://localhost:5001/User/editAuction?auctionId=" + event.target.id);
-    });
-
-
-
+      
+   
 
     $(".buyTokens").click(function(event) {
         alert(event.target.id);
@@ -54,7 +48,7 @@ $(document).ready(function() {
             )
         }
     } ).render ( "#paypal" )
-       
+
     function buyTokens ( ) {
         var verificationToken = $("input[name='__RequestVerificationToken']").val ( ) //Znaci ovde ga dohvatimo, on se nalazi na svakoj starnici
         alert(eventID);
@@ -76,3 +70,4 @@ $(document).ready(function() {
     }
         
     });
+ 

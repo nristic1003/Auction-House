@@ -1,36 +1,51 @@
-﻿@{
+﻿ @model PaginatedList<Iep.Models.Database.Auction>
+@{
+    string base64;
+    int cnt = 0;
+    int x = Model.Count;
+}
+@{
     ViewData["Title"] = "Home Page";
 }
+
+        <link rel="stylesheet" href="~/css/auctionPreview.css" />
 
 <div class="row mb-2">
     <div class="col-sm-12">
       <div class="d-flex justify-content-center "><h1> Auction House</h1></div>  
     </div>
 
-</div>
+</div> 
+
+
+<form asp-action="Index" method="GET">
+<div class="row">
+    
+    <div class="col">
 <div class="container d-flex justify-content-center mb-2 ">
   
- <div class="input-group col-sm-7 input-group-lg">
-       
-      <input type="text" class="form-control mr-4" placeholder="Type your text for search here...">
-   
+ <div class="input-group  input-group-lg">
+      <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]"placeholder="Type your text for search here..." style="width:100%;" />
      
-       
-    </div>
-   
-   
+       </div>
 </div>
-<div class="row ">
+      <div class="row ">
     <div class="col-sm-12">
         <div class="d-flex justify-content-center">
-             <a asp-controller="Home" asp-action="Search">
-            <button class="btn btn-primary">Search</button>
-    </a>
+            
+            <button id = "searchButton"class="btn btn-primary">Search</button>
+            </a>
+        </div>
      </div>
     </div>
+    
      
-  
+       
+    </div>
+   
+   
 </div>
+
 
 <div class="row ">
   
@@ -39,33 +54,96 @@
     <div class="row">
        <div class="d-flex justify-content-start">
          <div class="col-sm-5">
-        <label align="center"> Price:</label>
-        <div class="input-group input-group-sm">
-            <input type="number" class = "mb-1" placeholder="min" min="0" style="width: 100px;">
+            <label align="center"> Price:</label>
+            <div class="input-group input-group-sm">
+                <input type="number" name ="minPrice" id="minPrice" class = "mb-1" placeholder="min" min="0" style="width: 100px;">
+                
+                 <input class = "input-sm" name="maxPrice" type="number" placeholder="max" id="maxPrice" min ="0" style="width: 100px;">
+            </div>
+               <div class="input-group mb-3">
+                <label align="center"> State:</label>
+                <div class="input-group input-group-sm">
+                    <select  name = "state" class="custom-select" id="state" style="width: 100px;">
+                        <option selected>Choose...</option>
+                        <option value="1">READY</option>
+                        <option value="2">OPEN</option>
+                        <option value="3">EXPIRED</option>
             
-        <input class = "input-sm" type="number" placeholder="max" min ="0" style="width: 100px;">
-        </div>
-       
-        </div>
-</div>
-</div>
-    <div class="row">
-       
-         <div class="col-sm-1">
-             <div class="input-group mb-3">
-    <label align="center"> State:</label>
-    <div class="input-group input-group-sm">
-        <select  class="custom-select" id="inputGroupSelect01" style="width: 100px;">
-    <option selected>Choose...</option>
-    <option value="1">Ready</option>
-    <option value="2">Open</option>
-    <option value="3">Expired</option>
- 
-  </select>
-    </div>
-    <div class="col-sm-10"></div>
+                    </select>
+                </div>
   
-</div>
+            </div>
        
+            </div>
         </div>
+
+        <div id= "test" class="col">
+
+         
+     <div class="container">
+    
+
+        @foreach (var item in Model)
+        {
+           
+            base64 = Convert.ToBase64String(item.image);
+           
+            if(cnt%4==0)
+            {
+                @Html.Raw("<div class = 'row'>")
+            }
+            cnt++;
+              @Html.Raw("<div class = 'col-md-3'>  <div class='d-flex justify-content-center'>")
+             @Html.Raw("<table class = 'table center' style = 'text-align:center'> <tr> <th>")
+                 @item.name
+                    @Html.Raw("</th></tr><tr><td>")
+                 <img src = "data:image/png;base64, @base64" width="200px" height="100px">
+                   @Html.Raw("</td></tr><tr><td>")
+                      @item.currentPrice <span> din</span>
+                @Html.Raw("</td></tr><tr><td>")
+                    @item.winner
+                      @Html.Raw("</td></tr><tr><td>")
+                           <input type="submit" value="BID" class="btn btn-success" />
+                            @Html.Raw("</td></tr></table>")
+                           
+                   @Html.Raw("</div> </div>")
+                if(cnt%4==0 || cnt==x)
+                {
+                      @Html.Raw("</div>")
+                }
+        }
+    @{
+    var prevDisabled = !Model.PreviousPage ? "disabled": "";
+     var nextDisabled = !Model.NextPage ? "disabled": "";
+}
+<div class="row">
+    <div class="col-sm-12">
+            <div class="d-flex justify-content-center">
+                <a asp-action="Index"
+                    asp-route-sortOrder="@ViewData["CurrentSort"]"
+                    asp-route-pageNumber="@(Model.PageIndex - 1)"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    class="btn btn-default @prevDisabled">
+                        Previous
+                </a>
+                <a asp-action="Index"
+                    asp-route-sortOrder="@ViewData["CurrentSort"]"
+                    asp-route-pageNumber="@(Model.PageIndex + 1)"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    class="btn btn-default @nextDisabled">
+                        Next
+                </a>
+            </div>
+   </div>
+    </div>
+  
+
 </div>
+
+    </div>
+
+        </div>
+    </div>
+
+  
+ </form>

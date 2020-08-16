@@ -20521,6 +20521,11 @@
   "RootNamespace": "Iep",
   "Documents": [
     {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\allUsers.cshtml",
+      "TargetPath": "Views\\User\\allUsers.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\Pagination.cshtml",
       "TargetPath": "Views\\User\\Pagination.cshtml",
       "FileKind": "mvc"
@@ -20533,6 +20538,11 @@
     {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\UserInfo.cshtml",
       "TargetPath": "Views\\User\\UserInfo.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Home\\Search.cshtml",
+      "TargetPath": "Views\\Home\\Search.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -20581,6 +20591,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Shared\\Admin.cshtml",
+      "TargetPath": "Views\\Shared\\Admin.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\Shared\\User.cshtml",
       "TargetPath": "Views\\Shared\\User.cshtml",
       "FileKind": "mvc"
@@ -20598,6 +20613,11 @@
     {
       "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\EditUser.cshtml",
       "TargetPath": "Views\\User\\EditUser.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\Nikola\\Desktop\\IEP_Proj\\Iep\\Views\\User\\AdminView.cshtml",
+      "TargetPath": "Views\\User\\AdminView.cshtml",
       "FileKind": "mvc"
     },
     {

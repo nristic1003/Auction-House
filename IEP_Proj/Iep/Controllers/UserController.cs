@@ -13,6 +13,7 @@ using System;
 using Iep.Models;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace Iep.Controllers{
 
@@ -22,7 +23,7 @@ namespace Iep.Controllers{
         private UserManager<User> userManager;
         private IMapper mapper;
         private SignInManager<User> signInManager;
-        
+     
 
 
         public UserController(AuctionContext context, UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper)
@@ -38,11 +39,16 @@ namespace Iep.Controllers{
         public IActionResult Register(){
             return View();
         }
-        
+
+    
         public IActionResult Tokens(){
+     
             return View();
         }
 
+    
+
+  
         [Authorize]
         public async Task<IActionResult> UserInfo()
         {
@@ -58,6 +64,75 @@ namespace Iep.Controllers{
          
             return View(await PaginatedList< Auction>.CreateAsync(data, pageNumber,4));
         }
+ 
+
+       [Authorize(Roles="Administrator")]
+       public async  Task<IActionResult> AdminView(int pageNumber =1)
+       { 
+           var data = this.context.auction;
+           return View(await PaginatedList< Auction>.CreateAsync(data, pageNumber,10));
+       }
+       
+       [Authorize(Roles="Administrator")]
+       public async  Task<IActionResult> allUsers(int pageNumber =1)
+       { 
+           var data = this.context.user;
+           return View(await PaginatedList< User>.CreateAsync(data, pageNumber,10));
+       }
+
+        [Authorize(Roles="Administrator")]
+        public async  Task<IActionResult> deleteFromDatabase(string? id)
+           {
+                User user = this.context.user.Where(u=>u.Id ==id).FirstOrDefault();
+                if(user!=null)
+                {
+                    this.context.user.Remove(user);
+                    await this.context.SaveChangesAsync();
+                }
+                   return RedirectToAction(nameof(UserController.allUsers), "User");
+           }
+        
+        
+        [Authorize(Roles="Administrator")]
+        public async  Task<IActionResult> banUser(string? id)
+           {
+                User user = this.context.user.Where(u=>u.Id ==id).FirstOrDefault();
+                if(user!=null)
+                {
+                   user.state = 'B';
+                     this.context.user.Update(user);
+                    await this.context.SaveChangesAsync();
+                }
+                   return RedirectToAction(nameof(UserController.allUsers), "User");
+           }
+
+        [Authorize(Roles="Administrator")]
+        public async  Task<IActionResult> confirmAuction(int? id)
+           {
+                Auction auction = this.context.auction.Where(u=>u.Id ==id).FirstOrDefault();
+                if(auction!=null)
+                {
+                   auction.state ="READY";
+                  
+                     this.context.auction.Update(auction);
+                    await this.context.SaveChangesAsync();
+                }
+                   return RedirectToAction(nameof(UserController.AdminView), "User");
+           }
+
+           [Authorize(Roles="Administrator")]
+        public async  Task<IActionResult> dismissAuction(int? id)
+           {
+                Auction auction = this.context.auction.Where(u=>u.Id ==id).FirstOrDefault();
+                if(auction!=null)
+                {
+                   auction.state ="DELETED";
+                     this.context.auction.Update(auction);
+                    await this.context.SaveChangesAsync();
+                }
+                   return RedirectToAction(nameof(UserController.AdminView), "User");
+           }
+
       
         public    IActionResult editAuction(int? id)
         {
@@ -65,6 +140,7 @@ namespace Iep.Controllers{
             if(auction!=null)
             {
              AuctionModel aucModel = new AuctionModel(){
+                 Id = auction.Id,
                 name = auction.name,
                 description = auction.description,
                 startPrice = auction.startPrice,
@@ -78,6 +154,48 @@ namespace Iep.Controllers{
             }
          
         }
+        [HttpPost]
+        [Authorize]
+         public   async Task<IActionResult> editAuction(AuctionModel model)
+         {
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            Auction auction = this.context.auction.Find(model.Id);
+            User user = await this.userManager.GetUserAsync(base.User);
+           using (BinaryReader reader = new BinaryReader(model.file.OpenReadStream()))
+           {
+              
+                   auction.name = model.name;
+                   auction.description = model.description;
+                  auction.image = reader.ReadBytes(Convert.ToInt32(reader.BaseStream.Length));
+                   auction.createDate = DateTime.UtcNow;
+                   auction.startPrice = model.startPrice;
+                   auction.currentPrice = model.startPrice;
+                   auction.openDate = model.openDate;
+                   auction.closeDate = model.closeDate;
+                   auction.state = "DRAFT";
+                   auction.owner = user;
+
+           }
+             this.context.auction.Update(auction);
+            await this.context.SaveChangesAsync();
+            return RedirectToAction(nameof(UserController.UserInfo), "User");
+            
+         }
+         [Authorize]
+        public async  Task<IActionResult> deleteAuction(int? id)
+           {
+                Auction auction = this.context.auction.Find(id);
+                if(auction!=null)
+                {
+                    this.context.auction.Remove(auction);
+                    await this.context.SaveChangesAsync();
+                }
+                   return RedirectToAction(nameof(UserController.myAuctions), "User");
+           }
         [Authorize]
         public  IActionResult ChangePassword()
         {
@@ -306,6 +424,15 @@ namespace Iep.Controllers{
             if(!ModelState.IsValid)
                 return View(model);
 
+            User u = this.context.user.Where(u=> u.UserName == model.username).FirstOrDefault();
+            if(u.state=='B')
+            {
+                   ModelState.AddModelError("", "This account has been banned");
+                return View(model);
+            }
+
+
+
             var result = await this.signInManager.PasswordSignInAsync(model.username, model.password, false, false);
             
             
@@ -315,7 +442,7 @@ namespace Iep.Controllers{
                 ModelState.AddModelError("", "Username or password not valid!");
                 return View(model);
             }
-
+          
             if(model.returnUrl != null)
                 return Redirect(model.returnUrl);
             else
@@ -367,7 +494,9 @@ namespace Iep.Controllers{
       
         }
         
+        
       
       
     }
+
 }

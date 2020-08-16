@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 namespace Iep.Models.View{
     public class AuctionModel
     {
+      
+        public int Id{get; set;}
           [Required]
         [Display(Name = "Name")]
         public string name{get; set;}

@@ -377,3 +377,7 @@ C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\Ne
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Home\AuctionPreview.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\myAuctions.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\editAuction.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Admin.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\AdminView.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\allUsers.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Home\Search.cshtml.g.cs

@@ -1,12 +1,15 @@
 @model PaginatedList<Iep.Models.Database.Auction>
-
-@{
-    ViewData["Title"] = "My Auctions";
-}
-
-
 <div class="row">
-    <div class="col-md-12">
+
+    <div class="col-sm-6">
+        <h1>Welcome to admin view </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2" style="margin: 10px 0 40px 0;">
+          <a asp-action="allUsers" > All Users </a>  
+    </div>
+    <div class="col-md-10">
         <table class="table table-striped">
             <tr>
                 <th>
@@ -23,9 +26,7 @@
                 </th>
             </tr>
             @foreach (var item in Model)
-            {
-                
-                
+            {       
                      <tr id ="@item.Id">
                     <td>
                         @item.name
@@ -36,13 +37,13 @@
                     <td>
                         @item.state
                     </td>  
-                    <td>
-                     <a asp-action="editAuction" asp-route-id = "@item.Id"> Edit </a>          </td>
+                    <td>login
+                     <a asp-action="confirmAuction" asp-route-id = "@item.Id"> Confirm </a>      </td>
                       <td>
-                       <a asp-action="deleteAuction" asp-route-id = "@item.Id"> Delete </a>
+                       <a asp-action="dismissAuction" asp-route-id = "@item.Id"> Delete </a>
                     </td>    
                 </tr>
-                @if(@item.state != "DRAFT")
+                @if(@item.state == "EXPIRED")
                 {
                     <script>
                     function disableDiv()
@@ -54,13 +55,34 @@
                     } disableDiv();
                 </script>
                 }
-                
-
-               
-
             }
         </table>
     </div>
 </div>
+    @{
+    var prevDisabled = !Model.PreviousPage ? "disabled": "";
+     var nextDisabled = !Model.NextPage ? "disabled": "";
+    }
+<div class="row">
+    <div class="col">
+         <div class="d-flex justify-content-center">
+       <a asp-action = "AdminView"
+    asp-route-pageNumber = "@(Model.PageIndex-1)"
+    class = "btn btn-default @prevDisabled">
+    Previous
+    </a>
+    <a asp-action = "AdminView"
+    asp-route-pageNumber = "@(Model.PageIndex+1)"
+    class = "btn btn-default @nextDisabled">
+    Next
+    </a>
+   </div>
+    </div>
+  
+
+</div>
+
+    </div>
+
 
 

@@ -1,0 +1,89 @@
+@model PaginatedList<Iep.Models.Database.User>
+<div class="row">
+
+    <div class="col-sm-6">
+        <h1>Welcome to admin view </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2" style="margin: 10px 0 40px 0;">
+          <a asp-action="AdminView" > All Auctions </a>  
+    </div>
+    <div class="col-md-10">
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    Username
+                </th>
+                <th>
+                  First Name
+                </th>
+                <th>
+                    Email
+                </th>
+                  <th>
+                    Num of tokens
+                </th>
+                   <th>
+                   State
+                </th>
+                <th colspan="2">
+                    Options
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {       
+                     <tr id ="@item.Id">
+                    <td>
+                        @item.UserName
+                    </td>
+                    <td>
+                        @item.firstName
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>  
+                      <td>
+                        @item.tokens
+                    </td>  
+                       <td>
+                        @item.state
+                    </td>  
+                    <td>
+                     <a asp-action="deleteFromDatabase" asp-route-id = "@item.Id"> Delete from Database </a>      </td>
+                      <td>
+                       <a asp-action="banUser" asp-route-id = "@item.Id"> BAN </a>
+                    </td>    
+                </tr>
+            
+            }
+        </table>
+    </div>
+</div>
+    @{
+    var prevDisabled = !Model.PreviousPage ? "disabled": "";
+     var nextDisabled = !Model.NextPage ? "disabled": "";
+    }
+<div class="row">
+    <div class="col">
+         <div class="d-flex justify-content-center">
+       <a asp-action = "AdminView"
+    asp-route-pageNumber = "@(Model.PageIndex-1)"
+    class = "btn btn-default @prevDisabled">
+    Previous
+    </a>
+    <a asp-action = "AdminView"
+    asp-route-pageNumber = "@(Model.PageIndex+1)"
+    class = "btn btn-default @nextDisabled">
+    Next
+    </a>
+   </div>
+    </div>
+  
+
+</div>
+
+    </div>
+
+
+
