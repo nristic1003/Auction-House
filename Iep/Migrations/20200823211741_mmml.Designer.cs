@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Iep.Migrations
 {
     [DbContext(typeof(AuctionContext))]
-    [Migration("20200808200717_DrugaMigracija")]
-    partial class DrugaMigracija
+    [Migration("20200823211741_mmml")]
+    partial class mmml
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,11 @@ namespace Iep.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<DateTime>("closeDate")
                         .HasColumnType("datetime2");
@@ -77,8 +82,10 @@ namespace Iep.Migrations
 
             modelBuilder.Entity("Iep.Models.Database.Bids", b =>
                 {
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("auctionId")
                         .HasColumnType("int");
@@ -89,9 +96,14 @@ namespace Iep.Migrations
                     b.Property<int>("price")
                         .HasColumnType("int");
 
-                    b.HasKey("userId", "auctionId");
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("auctionId");
+
+                    b.HasIndex("userId");
 
                     b.ToTable("bids");
                 });
@@ -291,15 +303,15 @@ namespace Iep.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b481a26-8ca4-4fea-820b-0b046e75ee18",
-                            ConcurrencyStamp = "df8e7ff8-3c75-44af-97cc-a079aef04889",
+                            Id = "4b5ce9fb-c2af-41d6-aa83-7ed33731891f",
+                            ConcurrencyStamp = "7c634d3b-0f42-4f7b-a4ce-7196709424c6",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "afaf35cc-37d6-49ce-abb7-318b72796fba",
-                            ConcurrencyStamp = "2e8dabd3-5dc3-4515-b164-b21652cf114c",
+                            Id = "e56d871b-6f5f-4c5b-aefd-d6bd73434e1b",
+                            ConcurrencyStamp = "7477857a-63ef-411f-9c8f-447e63e7e1de",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -428,11 +440,9 @@ namespace Iep.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Iep.Models.Database.User", "user")
+                    b.HasOne("Iep.Models.Database.User", null)
                         .WithMany("BidList")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("userId");
                 });
 
             modelBuilder.Entity("Iep.Models.Database.Transaction", b =>

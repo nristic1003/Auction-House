@@ -3,9 +3,12 @@
     ViewData["Title"] = "NewAuction";
 }
 @{
-   String x = DateTime.UtcNow.GetDateTimeFormats('s')[0];
+   String x = DateTime.Now.GetDateTimeFormats('s')[0];
 }
- <p>@x</p>
+<head>
+ <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/js/validationAuc.js" asp-append-version="true"></script>
+</head>
 <h1 align="center">New Auction</h1>
 <div class="row justify-content-center">
     <div class="col-xl-4">
@@ -13,19 +16,22 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="name" class="control-label">Name</label>
-                <input asp-for="name" class="form-control" />
+                <input id="name" asp-for="name" class="form-control" />
+                <div id="name_error">The Name field is required.</div>
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="description"
                  class="control-label">Description</label>
-                <textarea  asp-for="description" class="form-control" rows = "4"/> </textarea>
+                <textarea id="description"  asp-for="description" class="form-control" rows = "4"/> </textarea>
+                <div id="description_error">The Description field is required.</div>
                 <span asp-validation-for="description" class="text-danger"></span>
             </div>
              <div class="form-group">
                 <label asp-for="file"
                  class="control-label"></label>
-                <input type="file" asp-for="file" class="form-control" />
+                <input id="file" type="file" asp-for="file" class="form-control" />
+                <div id="file_error">The Image field is required.</div>
                 <span asp-validation-for="file" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -46,7 +52,7 @@
                 <span asp-validation-for="closeDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create Auction" class="btn btn-primary" />
+                <input id ="newAuction" type="submit" value="Create Auction" class="btn btn-primary" />
             </div>
         </form>
     </div>

@@ -13,6 +13,7 @@ using Iep.Models.Database;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Iep.Factories;
+using Iep.Hubs;
 
 namespace Iep
 {
@@ -36,6 +37,7 @@ namespace Iep
             services.AddControllersWithViews();
                 services.AddIdentity<User, IdentityRole>(
                 options => {
+                    
                     options.User.RequireUniqueEmail = true;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireDigit = true;
@@ -54,6 +56,9 @@ namespace Iep
                     
                 }
             );
+
+            services.AddSignalR();
+
             services.AddScoped<IUserClaimsPrincipalFactory<User>, ClaimFactory>();
         }
 
@@ -79,6 +84,7 @@ namespace Iep
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<AuctionHub> ("/update");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Iep.Models.Database{
     public class Bids {
- 
-        
+        [Key]
+        public int Id{get; set;}
+
         public int price {get; set;} //broj ulozenih tokena fakticki
  
         public DateTime bidDate {get; set;}
@@ -25,9 +26,13 @@ namespace Iep.Models.Database{
         {
         public void Configure(EntityTypeBuilder<Bids> builder)
         {
-            builder.HasKey(
-                entity => new {entity.userId, entity.auctionId}  //Kompozitni kljuc :D
-            );
+         
+            builder.Property(bids => bids.Id).ValueGeneratedOnAdd();
+
+            builder.HasOne<Auction>(item => item.auction)
+            .WithMany(item => item.BidList)
+            .HasForeignKey(item => new {item.auctionId} );
+
 
             
 

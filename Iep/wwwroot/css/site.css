@@ -69,3 +69,96 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.linkAukcija a:link, a:hover{
+  text-decoration:none;
+}
+
+
+#firstName_error,#password_error,#badPrice,
+#email_error,#gender_error,#lastName_error,
+#username_error,#name_error,#description_error,
+#file_error,#userLog, #pass_error,#confirmPass_error,#oldPass_error{
+	margin-top: 5px;
+	width: 100%;
+	font-size: 18px;
+	color: #C62828;
+	background: rgba(255,0,0,0.1);
+	text-align: center;
+	border-radius: 3px;
+	border: 1px solid #EF9A9A;
+	display:none;
+}
+
+.fancy {
+  text-align: center;
+
+  /* Same trick as previsouly used to make circles */
+  box-sizing: border-box;
+  width     : 150px;
+  height    : 150px;
+  padding   : 80px 1em 0 1em;
+
+  /* We make room for the "ears" of our cloud */
+  margin    : 0 100px;
+
+  position: relative;
+
+  background-color: #A4C9CF;
+
+  /* Well, actually we are not making a full circle
+     as we want the bottom of our cloud to be flat.
+     Feel free to tweak this example to make a cloud
+     that isn't flat at the bottom ;) */
+  border-radius: 100% 100% 0 0;
+}
+
+/* Those are common style that apply to both our ::before
+   and ::after pseudo elements. */
+.fancy::before,
+.fancy::after {
+  /* This is required to be allowed to display the
+     pseudo-elements, event if the value is an empty
+     string */
+  content: '';
+
+  /* We positionnate our pseudo-elements on the left and
+     right sides of the box, but always at the bottom */
+  position: absolute;
+  bottom  : 0;
+
+  /* This makes sure our pseudo-elements will be below
+     the box content whatever happens. */
+  z-index : -1;
+
+  background-color: #A4C9CF;
+  border-radius: 100%;
+}
+
+.fancy::before {
+  /* This is the  size of the clouds left ear */
+  width  : 125px;
+  height : 125px;
+
+  /* We sligthly move it to the left */
+  left    : -80px;
+
+  /* To make sure that the bottom of the cloud
+     remains flat, we must make the bottom right
+     corner of the left ear square. */
+  border-bottom-right-radius: 0;
+}
+
+.fancy::after {
+  /* This is the size of the clouds left ear */
+  width  : 100px;
+  height : 100px;
+
+  /* We sligthly move it to the right */
+  right   : -60px;
+
+  /* To make sure that the bottom of the cloud
+     remains flat, we must make the bottom left
+     corner of the right ear square. */
+  border-bottom-left-radius: 0;
+}

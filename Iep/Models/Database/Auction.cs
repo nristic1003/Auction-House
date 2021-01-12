@@ -19,7 +19,7 @@ namespace Iep.Models.Database{
         public string description{get; set;}
  
         [Required]
-        public byte[] image{get; set;} //ovo je za sliku, slika se cuva kao niz bajtova
+        public byte[] image{get; set;}
         
         [Required]
         public int startPrice{get; set;}
@@ -37,13 +37,14 @@ namespace Iep.Models.Database{
         public DateTime closeDate{get; set;}
  
         [Required]
-        public string state{get; set;} //Draft, Ready, Open, Sold, Expired i Deleted
-
-
+        public string state{get; set;} 
         public User winner {get; set;} 
         public User owner {get; set;}
 
         public ICollection<Bids> BidList{get; set;}
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
         
 
 

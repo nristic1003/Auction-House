@@ -26,6 +26,11 @@ namespace Iep.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<DateTime>("closeDate")
                         .HasColumnType("datetime2");
 
@@ -75,8 +80,10 @@ namespace Iep.Migrations
 
             modelBuilder.Entity("Iep.Models.Database.Bids", b =>
                 {
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("auctionId")
                         .HasColumnType("int");
@@ -87,9 +94,14 @@ namespace Iep.Migrations
                     b.Property<int>("price")
                         .HasColumnType("int");
 
-                    b.HasKey("userId", "auctionId");
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("auctionId");
+
+                    b.HasIndex("userId");
 
                     b.ToTable("bids");
                 });
@@ -289,15 +301,15 @@ namespace Iep.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b481a26-8ca4-4fea-820b-0b046e75ee18",
-                            ConcurrencyStamp = "df8e7ff8-3c75-44af-97cc-a079aef04889",
+                            Id = "93685703-058b-4dba-94ec-7b20605e0d29",
+                            ConcurrencyStamp = "98a173a5-b70d-4bb3-9ab0-bf5cc64e4e8f",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "afaf35cc-37d6-49ce-abb7-318b72796fba",
-                            ConcurrencyStamp = "2e8dabd3-5dc3-4515-b164-b21652cf114c",
+                            Id = "309ccc58-9006-489b-80da-d5978ec07bcf",
+                            ConcurrencyStamp = "cdbb4296-bcae-4b59-a66e-e798350a8c78",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -426,11 +438,9 @@ namespace Iep.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Iep.Models.Database.User", "user")
+                    b.HasOne("Iep.Models.Database.User", null)
                         .WithMany("BidList")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("userId");
                 });
 
             modelBuilder.Entity("Iep.Models.Database.Transaction", b =>

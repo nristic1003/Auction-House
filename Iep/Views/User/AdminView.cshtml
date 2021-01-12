@@ -18,6 +18,9 @@
                 <th>
                     Open Date
                 </th>
+                  <th>
+                    Close Date
+                </th>
                 <th>
                     State
                 </th>
@@ -34,16 +37,19 @@
                     <td>
                         @item.openDate
                     </td>
+                       <td>
+                        @item.closeDate
+                    </td>
                     <td>
                         @item.state
                     </td>  
-                    <td>login
+                    <td>
                      <a asp-action="confirmAuction" asp-route-id = "@item.Id"> Confirm </a>      </td>
                       <td>
                        <a asp-action="dismissAuction" asp-route-id = "@item.Id"> Delete </a>
                     </td>    
                 </tr>
-                @if(@item.state == "EXPIRED")
+                @if(@item.state == "EXPIRED" || @item.state=="DELETED")
                 {
                     <script>
                     function disableDiv()

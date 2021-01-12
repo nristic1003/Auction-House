@@ -6,6 +6,6 @@
 @inject SignInManager<User> signInManager;
 
  @if(signInManager.IsSignedIn(User)){
-  <a class="nav-link" asp-controller="User" asp-action="NewAuction">AddAuction </a>
+  <a class="nav-link text-light" asp-controller="User" asp-action="NewAuction">AddAuction </a>
  }
  

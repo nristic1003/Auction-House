@@ -1,3 +1,5 @@
+using System.Text;
+using System.Data;
 using System.ComponentModel;
 using System.Security.AccessControl;
 using System.IO;
@@ -40,13 +42,138 @@ namespace Iep.Controllers{
             return View();
         }
 
+        [Authorize]
+        public IActionResult winningAuctionDetails(int id)
+        {
+              Auction auction  = this.context.auction.Include( a=> a.winner).Include(a => a.owner).Where( a => a.Id == id).FirstOrDefault();
+
+              if(auction!=null)
+              {
+                  IList<Bids> bids =  this.context.bids.Include( s => s.user).Where( b => b.auctionId == id).OrderByDescending(b => b.bidDate).Take(5).ToList();
+                    ViewBag.userID = bids;
+                   return View(auction);
+              }
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
     
         public IActionResult Tokens(){
      
             return View();
         }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> bid(int id, int price, DateTime newDate, int myBid=0)
+        {
 
-    
+           Auction auc = this.context.auction.Include(s => s.winner).Where(a => a.Id == id).FirstOrDefault(); 
+
+        
+           // Thread.Sleep(5000);
+            
+           if(auc!=null)
+           {
+               User user = await this.userManager.GetUserAsync(base.User);
+           
+               if(myBid==0) myBid=10;
+
+               if(user.tokens<auc.currentPrice+myBid)
+               return Json(new { success = false});
+
+               if(auc.owner==user)
+               {
+                    return Json(new { success = false});
+               }
+               
+                if(auc.winner!=user && auc.winner!=null)
+                {
+                    User u =  this.context.user.Find(auc.winner.Id);
+                     u.tokens +=auc.currentPrice;
+                     await this.userManager.UpdateAsync(u);
+
+                 }
+               auc.currentPrice += myBid;
+              
+         
+              auc.winner = user;
+              user.tokens -=auc.currentPrice;
+              auc.closeDate = newDate;
+             
+              Bids bid = new Bids(){
+                  userId = user.Id,
+                  auctionId = auc.Id,
+                  price = auc.currentPrice,
+                  bidDate = DateTime.Now
+
+              };
+
+            
+              this.context.bids.Add(bid);   
+            await this.context.SaveChangesAsync();
+            auc.BidList.Add(bid);
+
+
+         bool not_saved = true;
+        bool flag=true;
+         while(not_saved && flag)
+         {
+            try{
+                not_saved=false;
+                this.context.auction.Update(auc);
+                this.context.SaveChanges();
+
+            }catch(DbUpdateException ex)
+            {
+                not_saved=true;
+                flag=false;
+              
+
+
+               foreach (var entry in ex.Entries)
+                {
+                if (entry.Entity is Auction)
+                {
+                    var proposedValues = entry.CurrentValues;
+                    var databaseValues = entry.GetDatabaseValues();
+
+                       
+                    foreach (var property in proposedValues.Properties)
+                    {
+                        if(property.Name=="currentPrice"){
+                            var proposedValue = proposedValues[property]; // 10
+                            var databaseValue = databaseValues[property]; //5050
+
+                            flag =(int)proposedValue > (int)databaseValue;
+                          
+
+                        }
+        
+                        // TODO: decide which value should be written to database
+                        // proposedValues[property] = <value to be saved>;
+                    }
+
+                    // Refresh original values to bypass next concurrency check
+                    entry.OriginalValues.SetValues(databaseValues);
+                }
+              
+            }
+           
+            }
+         }
+             return Json(new { success = !not_saved,  winner = auc.winner.UserName, currPrice = auc.currentPrice });
+           }else{
+            return Json(false);
+           }
+           
+        }
+
+        [Authorize]
+        public async Task<IActionResult> winning(int pageNumber=1)
+        {
+            User user = await this.userManager.GetUserAsync(base.User);
+            var data = this.context.auction.Where( s => s.winner==user);
+            return View(await PaginatedList< Auction>.CreateAsync(data, pageNumber,12));
+        }
 
   
         [Authorize]
@@ -62,7 +189,7 @@ namespace Iep.Controllers{
           User user = await this.userManager.GetUserAsync(base.User);
              var data = context.auction.Where(a =>a.owner.Id == user.Id);  
          
-            return View(await PaginatedList< Auction>.CreateAsync(data, pageNumber,4));
+            return View(await PaginatedList< Auction>.CreateAsync(data, pageNumber,12));
         }
  
 
@@ -102,6 +229,22 @@ namespace Iep.Controllers{
                    user.state = 'B';
                      this.context.user.Update(user);
                     await this.context.SaveChangesAsync();
+                   var auctions =  await this.context.auction.Include(s => s.winner).Where(a => a.owner == user).ToListAsync(); 
+                    foreach(var item in auctions)
+                    {
+                        if(item.state!="EXPIRED")
+                        {
+                            if(item.state == "OPEN" && item.winner!=null)
+                            {
+                                 User u =  this.context.user.Find(item.winner.Id);
+                                 u.tokens +=item.currentPrice;
+                                 await this.userManager.UpdateAsync(u);
+                            }
+                            item.state ="EXPIRED";
+                            this.context.Update(item);
+                            await this.context.SaveChangesAsync();
+                        }
+                    }
                 }
                    return RedirectToAction(nameof(UserController.allUsers), "User");
            }
@@ -116,6 +259,7 @@ namespace Iep.Controllers{
                   
                      this.context.auction.Update(auction);
                     await this.context.SaveChangesAsync();
+                  
                 }
                    return RedirectToAction(nameof(UserController.AdminView), "User");
            }
@@ -170,7 +314,7 @@ namespace Iep.Controllers{
               
                    auction.name = model.name;
                    auction.description = model.description;
-                  auction.image = reader.ReadBytes(Convert.ToInt32(reader.BaseStream.Length));
+                   auction.image = reader.ReadBytes(Convert.ToInt32(reader.BaseStream.Length));
                    auction.createDate = DateTime.UtcNow;
                    auction.startPrice = model.startPrice;
                    auction.currentPrice = model.startPrice;
@@ -187,15 +331,22 @@ namespace Iep.Controllers{
          }
          [Authorize]
         public async  Task<IActionResult> deleteAuction(int? id)
-           {
+        {
                 Auction auction = this.context.auction.Find(id);
                 if(auction!=null)
                 {
+                    if(auction.winner!=null)
+                    {
+                        auction.winner.tokens += auction.currentPrice - auction.startPrice; 
+                         await   this.userManager.UpdateAsync(auction.winner);
+                    }
+             
                     this.context.auction.Remove(auction);
                     await this.context.SaveChangesAsync();
                 }
                    return RedirectToAction(nameof(UserController.myAuctions), "User");
-           }
+        }
+
         [Authorize]
         public  IActionResult ChangePassword()
         {
@@ -225,7 +376,7 @@ namespace Iep.Controllers{
               }else
               {
                
-                   await this.userManager.ChangePasswordAsync(user,model.oldPassword, model.confirmPassword); // proveriti
+                   await this.userManager.ChangePasswordAsync(user,model.oldPassword, model.confirmPassword); 
                    await this.userManager.UpdateAsync(user);
                    return RedirectToAction(nameof(UserController.UserInfo), "User");
               }
@@ -256,7 +407,7 @@ namespace Iep.Controllers{
                    name = model.name,
                    description = model.description,
                    image = reader.ReadBytes(Convert.ToInt32(reader.BaseStream.Length)),
-                   createDate = DateTime.UtcNow,
+                   createDate = DateTime.Now,
                    startPrice = model.startPrice,
                    currentPrice = model.startPrice,
                    openDate = model.openDate,
@@ -265,18 +416,22 @@ namespace Iep.Controllers{
                    owner = user
 
                };
+              
                await this.context.auction.AddAsync(aucMod);
                await this.context.SaveChangesAsync();
+              
+               
            }
            return RedirectToAction( nameof(UserController.NewAuction));
         }
+
 
         public async Task<IActionResult> Pagination(int pageNumber =1)
         {
              User user = await this.userManager.GetUserAsync(base.User);
              var data = context.transaction.Where(a =>a.idUser == user.Id );  
          
-            return View(await PaginatedList< Transaction>.CreateAsync(data, pageNumber,1));
+            return View(await PaginatedList< Transaction>.CreateAsync(data, pageNumber,12));
         }
         [Authorize]
         public async Task<IActionResult> EditUser()
@@ -292,25 +447,44 @@ namespace Iep.Controllers{
                 };
                 return View(eu);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> expired(int id)
+        {
+          Auction auc = this.context.auction.Find(id);
+          if(auc!=null)
+          {
+              if(auc.winner!=null) auc.state ="SOLD";
+              else auc.state = "EXPIRED";
+               this.context.Update(auc);
+               await this.context.SaveChangesAsync();
+               return Json(true);
+          }
+
+          return Json(false);
+            
+
+        }
+
          [HttpPost]
          [ValidateAntiForgeryToken]
-         public async Task<IActionResult> buyTokens(string bagName)
+         public async Task<IActionResult> buyTokens(string option)
          {
              User loggedInUser = await this.userManager.GetUserAsync(base.User);
              int idBag = 0;
              int tokenAmount = 0;
-             switch(bagName)
+             switch(option)
              {
                  case "silver":
                  {
                      idBag=1;
-                     tokenAmount = 10;
+                     tokenAmount = 5;
                  }
                  break;
                  case "gold":
                 {
                      idBag=2;
-                     tokenAmount = 15;
+                     tokenAmount = 10;
                  }
                  break;
                  case "platinum":
@@ -345,9 +519,7 @@ namespace Iep.Controllers{
             {
                 return View(model);
             }
-            /*
-                S obzirom da koristimo Identity biblioteku, ona vec u sebi ima mehanizam za dodavanje novog korsnika. Postoji klasa UserManager koja to radi,.
-            */
+            
             User user = this.mapper.Map<User>(model);
             IdentityResult result = await this.userManager.CreateAsync(user, model.password);
             if(!result.Succeeded)
@@ -383,7 +555,7 @@ namespace Iep.Controllers{
               PasswordVerificationResult result  = this.userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, model.password);
               if(result!=PasswordVerificationResult.Failed)
               {
-                 user.firstName = model.firstName;
+                user.firstName = model.firstName;
                 user.lastName = model.lastName;
                 user.gender = model.gender;
                  if(model.email!=user.Email)
@@ -425,42 +597,38 @@ namespace Iep.Controllers{
                 return View(model);
 
             User u = this.context.user.Where(u=> u.UserName == model.username).FirstOrDefault();
-            if(u.state=='B')
+            if(u!=null)
             {
-                   ModelState.AddModelError("", "This account has been banned");
-                return View(model);
+                if(u.state=='B')
+                {
+                    ModelState.AddModelError("", "This account has been banned");
+                    return View(model);
+                }
             }
-
-
+          
 
             var result = await this.signInManager.PasswordSignInAsync(model.username, model.password, false, false);
             
-            
-
+        
             if(!result.Succeeded)
             {
                 ModelState.AddModelError("", "Username or password not valid!");
                 return View(model);
             }
-          
+
             if(model.returnUrl != null)
                 return Redirect(model.returnUrl);
-            else
+            else 
                 return RedirectToAction(nameof(HomeController.Index), "Home");
+           
         }
 
         public IActionResult isEmailUnique(string email) 
         {
-            /*
-                Ova meto da se poziva tako sto se salje zahtev serveru tj. GET zahetv. Sto znaci da se parametri prosledjuju korz adresu, tako sto
-                se navodi ImePolja jednako VrednostPOlja. Sto znaci da metoda koja vrsi proveru mora da ima parametar koji se zove isto kao i polje
-                u Modelu da bi mogo de se izvrsi povezivanje GET parametara sa tim.
-            */
+            bool result = this.context.Users.Where(user=>user.Email == email).Any();
 
-            bool exists = this.context.Users.Where(user=>user.Email == email).Any();
-
-            if(exists)
-                return Json("Email already taken!");
+            if(result)
+                return Json("Email is taken!");
             else
                 return Json(true);
 
@@ -468,22 +636,14 @@ namespace Iep.Controllers{
 
         public IActionResult isUsernameUnique(string username) 
         {
-            /*
-                Ova meto da se poziva tako sto se salje zahtev serveru tj. GET zahetv. Sto znaci da se parametri prosledjuju korz adresu, tako sto
-                se navodi ImePolja jednako VrednostPOlja. Sto znaci da metoda koja vrsi proveru mora da ima parametar koji se zove isto kao i polje
-                u Modelu da bi mogo de se izvrsi povezivanje GET parametara sa tim.
-            */
+            bool result = this.context.Users.Where(user=>user.UserName == username).Any();
 
-            bool exists = this.context.Users.Where(user=>user.UserName == username).Any();
-
-            if(exists)
-                return Json("Username already taken!");
+            if(result)
+                return Json("Username is taken!");
             else
                 return Json(true);
 
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -494,9 +654,7 @@ namespace Iep.Controllers{
       
         }
         
-        
-      
-      
+            
     }
 
 }

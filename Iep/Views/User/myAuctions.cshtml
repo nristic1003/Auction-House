@@ -62,5 +62,32 @@
         </table>
     </div>
 </div>
+   @{
+    var prevDisabled = !Model.PreviousPage ? "disabled": "";
+     var nextDisabled = !Model.NextPage ? "disabled": "";
+}
+<div class="row">
+    <div class="col-sm-12">
+            <div class="d-flex justify-content-center">
+                <a asp-action="myAuctions"
+                    asp-route-sortOrder="@ViewData["CurrentSort"]"
+                    asp-route-pageNumber="@(Model.PageIndex - 1)"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    class="btn btn-default @prevDisabled">
+                        Previous
+                </a>
+                <a asp-action="myAuctions"
+                    asp-route-sortOrder="@ViewData["CurrentSort"]"
+                    asp-route-pageNumber="@(Model.PageIndex + 1)"
+                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    class="btn btn-default @nextDisabled">
+                        Next
+                </a>
+            </div>
+   </div>
+    </div>
+  
+
+</div>
 
 

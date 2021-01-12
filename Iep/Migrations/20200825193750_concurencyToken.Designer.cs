@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Iep.Migrations
 {
     [DbContext(typeof(AuctionContext))]
-    [Migration("20200808185858_PrvaMigracija")]
-    partial class PrvaMigracija
+    [Migration("20200825193750_concurencyToken")]
+    partial class concurencyToken
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,93 @@ namespace Iep.Migrations
                 .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Iep.Models.Database.Auction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime>("closeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("createDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("currentPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<DateTime>("openDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ownerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("startPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("state")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("winnerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ownerId");
+
+                    b.HasIndex("winnerId");
+
+                    b.ToTable("auction");
+                });
+
+            modelBuilder.Entity("Iep.Models.Database.Bids", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("auctionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("bidDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("price")
+                        .HasColumnType("int");
+
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("auctionId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("bids");
+                });
 
             modelBuilder.Entity("Iep.Models.Database.Tokens", b =>
                 {
@@ -41,6 +128,58 @@ namespace Iep.Migrations
                     b.HasKey("idToken");
 
                     b.ToTable("tokens");
+
+                    b.HasData(
+                        new
+                        {
+                            idToken = 1,
+                            amount = 5,
+                            name = "Silver",
+                            price = 7
+                        },
+                        new
+                        {
+                            idToken = 2,
+                            amount = 10,
+                            name = "Gold",
+                            price = 12
+                        },
+                        new
+                        {
+                            idToken = 3,
+                            amount = 20,
+                            name = "Platinum",
+                            price = 19
+                        });
+                });
+
+            modelBuilder.Entity("Iep.Models.Database.Transaction", b =>
+                {
+                    b.Property<int>("idT")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("idToken")
+                        .HasColumnType("int");
+
+                    b.Property<string>("idUser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("idT");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("idToken");
+
+                    b.ToTable("transaction");
                 });
 
             modelBuilder.Entity("Iep.Models.Database.User", b =>
@@ -61,21 +200,6 @@ namespace Iep.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("varchar(1)")
-                        .HasMaxLength(1);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -103,20 +227,39 @@ namespace Iep.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("varchar(1)")
-                        .HasMaxLength(1);
-
-                    b.Property<int>("Tokens")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
+
+                    b.Property<string>("firstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("gender")
+                        .IsRequired()
+                        .HasColumnType("varchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("lastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("state")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(1)")
+                        .HasMaxLength(1)
+                        .HasDefaultValue("A");
+
+                    b.Property<int>("tokens")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -160,15 +303,15 @@ namespace Iep.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1e2cbb47-fbf9-4a82-bc31-43c49d0ac2ba",
-                            ConcurrencyStamp = "6dcf9ab0-f219-4815-adb9-f1adf3310a6c",
+                            Id = "93685703-058b-4dba-94ec-7b20605e0d29",
+                            ConcurrencyStamp = "98a173a5-b70d-4bb3-9ab0-bf5cc64e4e8f",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "0533e3b4-392e-445b-b098-1d8aeb1dd486",
-                            ConcurrencyStamp = "26aadf1c-8ac6-4ddc-a9ed-14422062e66d",
+                            Id = "309ccc58-9006-489b-80da-d5978ec07bcf",
+                            ConcurrencyStamp = "cdbb4296-bcae-4b59-a66e-e798350a8c78",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -276,6 +419,43 @@ namespace Iep.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Iep.Models.Database.Auction", b =>
+                {
+                    b.HasOne("Iep.Models.Database.User", "owner")
+                        .WithMany("AuctionOwners")
+                        .HasForeignKey("ownerId");
+
+                    b.HasOne("Iep.Models.Database.User", "winner")
+                        .WithMany("AuctionWinners")
+                        .HasForeignKey("winnerId");
+                });
+
+            modelBuilder.Entity("Iep.Models.Database.Bids", b =>
+                {
+                    b.HasOne("Iep.Models.Database.Auction", "auction")
+                        .WithMany("BidList")
+                        .HasForeignKey("auctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Iep.Models.Database.User", null)
+                        .WithMany("BidList")
+                        .HasForeignKey("userId");
+                });
+
+            modelBuilder.Entity("Iep.Models.Database.Transaction", b =>
+                {
+                    b.HasOne("Iep.Models.Database.User", null)
+                        .WithMany("kolekcjaTransakcija")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("Iep.Models.Database.Tokens", "token")
+                        .WithMany("kolekcjaTransakcija")
+                        .HasForeignKey("idToken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

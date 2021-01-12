@@ -26,5 +26,5 @@
 }
 
 @if(signInManager.IsSignedIn(User) && role.Equals("Administrator")){
-    <a class="nav-link" asp-controller="User" asp-action="AdminView">Admin </a>
+    <a class="nav-link text-light" asp-controller="User" asp-action="AdminView">Admin </a>
 }

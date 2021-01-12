@@ -3,6 +3,12 @@
     ViewData["Title"] = "Log in";
 }
 
+ <head>
+ <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/js/validationLogin.js" asp-append-version="true"></script>
+ </head>
+
+
 <h1 align="center">Log in</h1>
 
 <div class="row justify-content-center">
@@ -12,16 +18,19 @@
             <input asp-for="returnUrl" />
             <div class="form-group">
                 <label asp-for="username" class="control-label"></label>
-                <input asp-for="username" class="form-control" />
+                <input id="username" asp-for="username" class="form-control" />
+                 <div id="username_error">Please enter your username</div>
                 <span asp-validation-for="username" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="password" class="control-label"></label>
-                <input asp-for="password" class="form-control" />
+                <input id="password" asp-for="password" class="form-control" />
+                  <div id="pass_error">Please enter a correct password</div>
+                
                 <span asp-validation-for="password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Log in" class="btn btn-success" />
+                <input id="login" type="submit" value="Log in" class="btn btn-success" />
             </div>
         </form>
     </div>

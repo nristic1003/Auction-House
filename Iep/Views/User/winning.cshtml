@@ -1,0 +1,87 @@
+ @model PaginatedList<Iep.Models.Database.Auction>
+@{
+    string base64;
+    int cnt = 0;
+    int x = Model.Count;
+    string name="";
+}
+
+@{
+    ViewData["Title"] = "winning";
+}
+
+<div class="row">
+    <div class="container">
+         
+         <div id ="userLog" class="ulogovan" style="text-align: left;">  
+          <input type="hidden" id="flag" value=0 />
+         </div>
+
+     
+        @foreach (var item in Model)
+        {
+           
+            base64 = Convert.ToBase64String(item.image);
+           
+            if(cnt%4==0)
+            {
+                @Html.Raw("<div class = 'row'>")
+            }
+           
+              @Html.Raw("<div class = 'col-md-3 " + @cnt +" '>  <div class='d-flex justify-content-center'>")
+                   cnt++;
+             @Html.Raw("<table class = 'table center' style = 'text-align:center'> <tr> <th>")
+               <a style="text-decoration:none;" asp-controller="User" asp-action ="winningAuctionDetails" asp-route-id = "@item.Id"> @item.name</a> 
+                    @Html.Raw("</th></tr><tr><td>")
+                 <img src = "data:image/png;base64, @base64" width="200px" height="100px">
+                   @Html.Raw("</td></tr><tr><td>")
+
+                  @Html.Raw("<div id='cena" + @item.Id +"'>") 
+                   @item.currentPrice  <span> din </span>
+                @Html.Raw("</div></td></tr><tr><td><div id='winner" + @item.Id +"'>")
+                  @Html.Raw("<div id='vreme" + @item.Id +"'>") 
+                         @Html.Raw("<input value='0' type='hidden' id='flag" + @cnt +"'>") 
+                      @Html.Raw("</div>")
+               
+                        @item.winner.UserName
+                 
+                    
+                      @Html.Raw("</div></td></tr>")
+                            @Html.Raw("</table>")
+                        
+                   @Html.Raw("</div> </div>")
+                if(cnt%4==0 || cnt==x)
+                {
+                      @Html.Raw("</div>")
+                }
+        }
+           
+         
+    @{
+    var prevDisabled = !Model.PreviousPage ? "disabled": "";
+     var nextDisabled = !Model.NextPage ? "disabled": "";
+}
+<div class="row">
+    <div class="col-sm-12">
+            <div class="d-flex justify-content-center">
+                <a asp-action="winning"
+                   
+                    asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   
+                    class="btn btn-default @prevDisabled">
+                        Previous
+                </a>
+                <a asp-action="winning"
+                  
+                    asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   
+                    class="btn btn-default @nextDisabled">
+                        Next
+                </a>
+            </div>
+   </div>
+    </div>
+  
+
+</div>
+</div>

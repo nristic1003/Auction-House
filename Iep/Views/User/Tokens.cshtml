@@ -1,16 +1,22 @@
+ <head>
+ <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/js/test.js" asp-append-version="true"></script>
+ </head>
+
+
 
  <div class="row my-auto">
     <div class="col-sm-4  bg-secondary text-white " >
          
               <h1 align="center"> Silver</h1>
                <ul class="list-group  bg-secondary text-white">
-  <li class="list-group-item  bg-secondary text-white">Cras justo odio</li>
-  <li class="list-group-item  bg-secondary text-white">Dapibus ac facilisis in</li>
-  <li class="list-group-item  bg-secondary text-white">Morbi leo risus</li>
-  <li class="list-group-item  bg-secondary text-white">Porta ac consectetur ac</li>
-  <li class="list-group-item  bg-secondary text-white">Vestibulum at eros</li>
-    <li class="list-group-item bg-secondary text-white text-center"><a id = "silver" class="btn btn-success buyTokens" href="#" role="button">Buy</a></li>
-</ul>
+                    <li class="list-group-item  bg-secondary text-white">Cras justo odio</li>
+                    <li class="list-group-item  bg-secondary text-white">Dapibus ac facilisis in</li>
+                    <li class="list-group-item  bg-secondary text-white">Morbi leo risus</li>
+                    <li class="list-group-item  bg-secondary text-white">Porta ac consectetur ac</li>
+                    <li class="list-group-item  bg-secondary text-white">5 tokens</li>
+                    <li class="list-group-item bg-secondary text-white text-center"><a id = "silver" class="btn btn-success buyTokens" href="#" role="button">Add</a></li>
+                </ul>
        
     </div>
     <div class="col-sm-4 bg-warning text-white my-auto" >
@@ -20,8 +26,8 @@
   <li class="list-group-item  bg-warning text-white">Dapibus ac facilisis in</li>
   <li class="list-group-item  bg-warning text-white">Morbi leo risus</li>
   <li class="list-group-item  bg-warning text-white">Porta ac consectetur ac</li>
-  <li class="list-group-item   bg-warning text-white">Vestibulum at eros</li>
-   <li class="list-group-item bg-warning text-white text-center"><a id = "gold" class="btn btn-success buyTokens" href="#" role="button">Buy</a></li>
+  <li class="list-group-item   bg-warning text-white">10 tokens</li>
+   <li class="list-group-item bg-warning text-white text-center"><a id = "gold" class="btn btn-success buyTokens" href="#" role="button">Add</a></li>
 </ul>
     </div>
     <div class="col-sm-4  text-white" style="background-color: #007F7A;">
@@ -31,17 +37,55 @@
   <li class="list-group-item  text-white" style="background-color: #007F7A; ">Dapibus ac facilisis in</li>
   <li class="list-group-item   text-white" style="background-color: #007F7A; ">Morbi leo risus</li>
   <li class="list-group-item   text-white" style="background-color: #007F7A; ">Porta ac consectetur ac</li>
-  <li class="list-group-item    text-white " style="background-color: #007F7A; ">Vestibulum at eros</li>
-    <li class="list-group-item text-white text-center" style="background-color: #007F7A; "><a  id = "platinum"class="btn btn-success buyTokens" href="#" role="button">Buy</a></li>
+  <li class="list-group-item    text-white " style="background-color: #007F7A; ">20 tokens</li>
+    <li class="list-group-item text-white text-center" style="background-color: #007F7A; "><a  id = "platinum"class="btn btn-success buyTokens" href="#" role="button">Add</a></li>
 </ul>
         
     </div>
   </div>
 
-  <div class="row justify-content-center mt-4">
-    <div class="col-xl-4">
-        <script src="https://www.paypal.com/sdk/js?client-id=AYnBe8PZFHQxCOdFZA2blUNywn3rNoRL8Qe3CUJ_el6Ktyw51tZ5kLH8_hrl0Gy7dzvy0gGJYe9ytAZD"></script>
-        <div id="paypal" style="width:225px"></div>
-    </div>
+<div class = "row  d-flex justify-content-center" style="margin-top:30px">
+<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal">Cart</button>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 align="left" class="modal-title">Cart</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      
+      </div>
+      <div class="modal-body">
+        <table id="cart" class = "table table-stripped">
+            <tr>
+                <td>
+                    Price: 
+                </td>
+                <td id="price">
+                    0
+                </td>
+            </tr>
+                
+        </table>
  
+        <script src="https://www.paypal.com/sdk/js?client-id=AYnBe8PZFHQxCOdFZA2blUNywn3rNoRL8Qe3CUJ_el6Ktyw51tZ5kLH8_hrl0Gy7dzvy0gGJYe9ytAZD"></script>
+        <div class = "row  d-flex justify-content-center">
+            <div class = "col-sm-4">
+                <div id="paypal" style="width:70px"></div>
+                </div>
+                </div>
+    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
 </div>
+ 
+    </div>
+    </div>
+    </div>

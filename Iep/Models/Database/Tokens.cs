@@ -35,7 +35,7 @@ namespace Iep.Models.Database
                         idToken = 1,
                         name = "Silver",
                         amount = 5,
-                        price = 7
+                        price = 10
                       
                     },
                     new Tokens()
@@ -43,7 +43,7 @@ namespace Iep.Models.Database
                         idToken = 2,
                         name = "Gold",
                         amount = 10,
-                        price = 12
+                        price = 100
                       
                     },
                     new Tokens()
@@ -51,7 +51,7 @@ namespace Iep.Models.Database
                         idToken = 3,
                         name = "Platinum",
                         amount = 20,
-                        price = 19
+                        price = 200
                       
                     } 
                 } 

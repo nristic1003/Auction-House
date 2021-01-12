@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Iep.Migrations
 {
-    public partial class PrvaMigracija : Migration
+    public partial class mmml : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,11 +40,11 @@ namespace Iep.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    FirstName = table.Column<string>(maxLength: 20, nullable: false),
-                    LastName = table.Column<string>(maxLength: 20, nullable: false),
-                    Gender = table.Column<string>(type: "varchar(1)", maxLength: 1, nullable: false),
-                    State = table.Column<string>(type: "varchar(1)", maxLength: 1, nullable: false),
-                    Tokens = table.Column<int>(nullable: false)
+                    firstName = table.Column<string>(maxLength: 20, nullable: false),
+                    lastName = table.Column<string>(maxLength: 20, nullable: false),
+                    gender = table.Column<string>(type: "varchar(1)", maxLength: 1, nullable: false),
+                    state = table.Column<string>(type: "varchar(1)", maxLength: 1, nullable: false, defaultValue: "A"),
+                    tokens = table.Column<int>(nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -172,15 +172,116 @@ namespace Iep.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1e2cbb47-fbf9-4a82-bc31-43c49d0ac2ba", "6dcf9ab0-f219-4815-adb9-f1adf3310a6c", "User", "USER" });
+            migrationBuilder.CreateTable(
+                name: "auction",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(maxLength: 20, nullable: false),
+                    description = table.Column<string>(nullable: false),
+                    image = table.Column<byte[]>(nullable: false),
+                    startPrice = table.Column<int>(nullable: false),
+                    currentPrice = table.Column<int>(nullable: false),
+                    createDate = table.Column<DateTime>(nullable: false),
+                    openDate = table.Column<DateTime>(nullable: false),
+                    closeDate = table.Column<DateTime>(nullable: false),
+                    state = table.Column<string>(nullable: false),
+                    winnerId = table.Column<string>(nullable: true),
+                    ownerId = table.Column<string>(nullable: true),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_auction", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_auction_AspNetUsers_ownerId",
+                        column: x => x.ownerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_auction_AspNetUsers_winnerId",
+                        column: x => x.winnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "transaction",
+                columns: table => new
+                {
+                    idT = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    date = table.Column<DateTime>(nullable: false),
+                    idUser = table.Column<string>(nullable: false),
+                    idToken = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_transaction", x => x.idT);
+                    table.ForeignKey(
+                        name: "FK_transaction_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_transaction_tokens_idToken",
+                        column: x => x.idToken,
+                        principalTable: "tokens",
+                        principalColumn: "idToken",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "bids",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    price = table.Column<int>(nullable: false),
+                    bidDate = table.Column<DateTime>(nullable: false),
+                    userId = table.Column<string>(nullable: true),
+                    auctionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_bids", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_bids_auction_auctionId",
+                        column: x => x.auctionId,
+                        principalTable: "auction",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_bids_AspNetUsers_userId",
+                        column: x => x.userId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "0533e3b4-392e-445b-b098-1d8aeb1dd486", "26aadf1c-8ac6-4ddc-a9ed-14422062e66d", "Administrator", "ADMINISTRATOR" });
+                values: new object[,]
+                {
+                    { "4b5ce9fb-c2af-41d6-aa83-7ed33731891f", "7c634d3b-0f42-4f7b-a4ce-7196709424c6", "User", "USER" },
+                    { "e56d871b-6f5f-4c5b-aefd-d6bd73434e1b", "7477857a-63ef-411f-9c8f-447e63e7e1de", "Administrator", "ADMINISTRATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "tokens",
+                columns: new[] { "idToken", "amount", "name", "price" },
+                values: new object[,]
+                {
+                    { 1, 5, "Silver", 7 },
+                    { 2, 10, "Gold", 12 },
+                    { 3, 20, "Platinum", 19 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -220,6 +321,36 @@ namespace Iep.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auction_ownerId",
+                table: "auction",
+                column: "ownerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_auction_winnerId",
+                table: "auction",
+                column: "winnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_bids_auctionId",
+                table: "bids",
+                column: "auctionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_bids_userId",
+                table: "bids",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_transaction_UserId",
+                table: "transaction",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_transaction_idToken",
+                table: "transaction",
+                column: "idToken");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -240,10 +371,19 @@ namespace Iep.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "tokens");
+                name: "bids");
+
+            migrationBuilder.DropTable(
+                name: "transaction");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "auction");
+
+            migrationBuilder.DropTable(
+                name: "tokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

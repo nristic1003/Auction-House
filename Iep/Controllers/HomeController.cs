@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,154 +11,118 @@ using Iep.Models.Database;
 using System.Net.Mime;
 using System.Threading;
 
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+
 namespace Iep.Controllers
 {
+
+
+
+
     public class HomeController : Controller
     {
-
-    
         private readonly ILogger<HomeController> _logger;
-          private AuctionContext context;
-          private Timer timer;
+        public AuctionContext context;
+      
 
+        public static bool timerStarted=false;
 
         public HomeController( AuctionContext context, ILogger<HomeController> logger)
         {
             _logger = logger;
             this.context = context;
-            this.timer = null;
+         
         }
 
-
-     class Check{
-
-        
-
-         public Check ()
-         {
-
-         } 
-
-         public void checkDate(List<DateTime> dates)
-         {
-            DateTime mostRecent= dates.First();
-            if(DateTime.Now == mostRecent)
+      
+     public async Task<IActionResult> Index(int minPrice, int maxPrice,string currentFilter,string searchString,int? pageNumber,string state="Choose...")
+        {
+              /*  var auction = from s in context.auction
+                        select s;*/
+             var x = DateTime.Now.AddHours(0);
+             var auction=from s in context.auction select s;
+             auction = this.context.auction.OrderByDescending( s=> s.createDate);
+            if(state=="Choose...")
             {
-                dates.Remove(mostRecent);
-                // Change Auction state
+             auction=this.context.auction.Include(a => a.winner).Where(s => s.openDate <x && s.closeDate>DateTime.Now && (s.state=="READY" || s.state=="OPEN")).OrderByDescending(s => s.createDate);
+                state = "";
+                
+            } 
+            else{
+                 switch(state) {
+                         case "1": state = "READY";
+                         break;
+                         case "2": state = "OPEN";
+                         break;
+                         case "3": state = "EXPIRED";
+                         break;
+                    }
+               } 
+              ViewData["state"]=state;           
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+             ViewData["minPrice"]=minPrice;
+             ViewData["maxPrice"]=maxPrice;
 
-
+            ViewData["CurrentFilter"] = searchString;
+            
+            foreach(var item in auction.ToList())
+            {
+                
+                if(item.state == "READY")
+                {      
+                    item.state ="OPEN";
+                    this.context.Update(item);
+                    await this.context.SaveChangesAsync();
+                 }
             }
 
-         }
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                auction = auction.Include(a => a.winner).Where(s => s.name.Contains(searchString));
+            }
+            if(minPrice!=0)
+            {
+                auction = auction.Include(a => a.winner).Where(s => s.currentPrice>= minPrice);
+            }
+            if(maxPrice!=0)
+            {
+                auction = auction.Include(a => a.winner).Where(s => s.currentPrice<=maxPrice);
+            }
+            if(state!="")
+            {
+                auction = auction.Include(a => a.winner).Where(s => s.state==state);
+            }
 
-     }
-class StatusChecker
-{
-    private int invokeCount;
-    private int  maxCount;
-
-    public StatusChecker(int count)
-    {
-        invokeCount  = 0;
-        maxCount = count;
-    }
-
-    // This method is called by the timer delegate.
-    public void CheckStatus(Object stateInfo)
-    {
-        //AutoResetEvent autoEvent = (AutoResetEvent)stateInfo;
-        Console.WriteLine("{0} Checking status {1,2}.", 
-            DateTime.Now.ToString("h:mm:ss.fff"), 
-            (++invokeCount).ToString());
-
-        if(invokeCount == maxCount)
-        {
-            // Reset the counter and signal the waiting thread.
-            invokeCount = 0;
-            //autoEvent.Set();
-        }
-    }
-}
-     public async Task<IActionResult> Index(
-            int minPrice,
-            int maxPrice,
-            string currentFilter,
-            string searchString,
-            int? pageNumber,
-            string state="Choose...")
-        {
-
-           var autoEvent = new AutoResetEvent(false);
-        
-        var statusChecker = new StatusChecker(10);
-
-        // Create a timer that invokes CheckStatus after one second, 
-        // and every 1/4 second thereafter.
-        Console.WriteLine("{0:h:mm:ss.fff} Creating timer.\n", 
-                          DateTime.Now);
-        var stateTimer = new Timer(statusChecker.CheckStatus, 
-                                   autoEvent, 1000, 250);
-
-     
-
-    Console.WriteLine(state);
-   if(state=="Choose...") state = "";
-   else{
-       switch(state)
-       {
-           case "1": state = "READY";
-           break;
-           case "2": state = "OPEN";
-           break;
-           case "3": state = "EXPIRED";
-           break;
-
-       }
-   }
+            int pageSize = 12;
     
-
-    if (searchString != null)
-    {
-        pageNumber = 1;
-    }
-    else
-    {
-        searchString = currentFilter;
-    }
-
-    ViewData["CurrentFilter"] = searchString;
-
-    var auction = from s in context.auction
-                   select s;
-    if (!String.IsNullOrEmpty(searchString))
-    {
-        auction = auction.Where(s => s.name.Contains(searchString));
-    }
-    if(minPrice!=0)
-    {
-        auction = auction.Where(s => s.currentPrice>= minPrice);
-    }
-    if(maxPrice!=0)
-    {
-        auction = auction.Where(s => s.currentPrice<=maxPrice);
-    }
-    if(state!="")
-    {
-        auction = auction.Where(s => s.state==state);
-    }
-
-   
-
-    int pageSize = 12;
-    return View(await PaginatedList<Auction>.CreateAsync(auction, pageNumber ?? 1, pageSize));
-}
+            return View(await PaginatedList<Auction>.CreateAsync(auction, pageNumber ?? 1, pageSize));
+        }
         public IActionResult Privacy()
         {
 
             return View();
         }
 
+        public IActionResult auctionDetails(int id)
+        {
+              Auction auction  = this.context.auction.Include( a=> a.winner).Include(a => a.owner).Where( a => a.Id == id).FirstOrDefault();
+
+              if(auction!=null)
+              {
+                  IList<Bids> bids =  this.context.bids.Include( s => s.user).Where( b => b.auctionId == id).OrderByDescending(b => b.bidDate).Take(5).ToList();
+                    ViewBag.userID = bids;
+                   return View(auction);
+              }
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
  
         public async Task<IActionResult> AuctionPreview(int pageNumber =1)
         {    

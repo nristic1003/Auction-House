@@ -21,22 +21,23 @@ namespace Iep.Models.View
         [Display(Name = "Email")]
         [EmailAddress]
         [DataType(DataType.EmailAddress)]
-        [Remote(controller: "User", action:nameof(UserController.isEmailUnique))] // nameof - operator, koji mozemo da iskrostimo da dobijemo naziv metode. Ovo je mnogo bolje zasto ukoliko menjamo naziv metode okruzenje ce da nas upozoroi!
+        [Remote(controller: "User", action:nameof(UserController.isEmailUnique))] 
         public string email{get; set;}
 
         [Required]
         [Display(Name = "Username")]
+        [MinLength(6)]
         [Remote(controller: "User", action:nameof(UserController.isUsernameUnique))]
         public string username{get; set;}
 
         [Required]
         [Display(Name = "Password")]
-        [DataType(DataType.Password)] //Prilikom unosa nece se prikazivati tekst nego tackice :D
+        [DataType(DataType.Password)] 
         public string password{get; set;}
 
         [Required]
         [Display(Name = "Confirm password")]
-        [Compare(nameof(password), ErrorMessage = "Password and Confirm password fields must match!")] //Da mora da ima istu vrednost kao polje password; prvo je ime atribura sa kojom se uporedjuje i poruka greske
+        [Compare(nameof(password), ErrorMessage = "Password and Confirm password fields must match!")] 
         [DataType(DataType.Password)]
         public string confirmPassword{get; set;}
 

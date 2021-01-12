@@ -374,10 +374,15 @@ C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\Ch
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\Pagination.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\AddAuction.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\NewAuction.cshtml.g.cs
-C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Home\AuctionPreview.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\myAuctions.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\editAuction.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Admin.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\AdminView.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\allUsers.cshtml.g.cs
 C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Home\Search.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\bin\Debug\netcoreapp3.1\libman.json
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\SignalRScriptsPartial.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Home\auctionDetails.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\Shared\test.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\winning.cshtml.g.cs
+C:\Users\Nikola\Desktop\IEP_Proj\Iep\obj\Debug\netcoreapp3.1\Razor\Views\User\winningAuctionDetails.cshtml.g.cs

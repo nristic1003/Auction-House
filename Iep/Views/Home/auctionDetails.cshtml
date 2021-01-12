@@ -1,0 +1,195 @@
+@model Iep.Models.Database.Auction
+
+@{
+    var  base64 = Convert.ToBase64String(Model.image);
+  
+
+}
+    
+@{
+    await Html.RenderPartialAsync("SignalRScriptsPartial");
+}
+
+    
+<div id = "forDisable">
+<div class = "row">
+    <div class = "col">
+              <div class="d-flex justify-content-center "><h1> @Model.name</h1>
+              </div>  
+    </div>
+  
+</div>
+
+<div class = "row">
+    <div class = "col-sm-2">  </div>
+       <div class = "col-sm-4">
+             <div class="d-flex justify-content-center ">
+                  <img class="img-fluid" src = "data:image/png;base64, @base64" >
+            </div>
+     </div>
+       <div class="col-sm-5 col-md-4 d-flex justify-content-center justify-content-md-start">
+            <table class="table table-stripped">
+             
+                   <tr>
+                    <td>Time left:</td>
+                    <td> <span id="timer"> </span></td>
+                </tr>
+                    <tr>
+                    <td>Winner:</td>
+                    <td> @Html.Raw("<span id='winner" + @Model.Id +"'>") 
+                           @if(@Model.winner!=null)
+                           {
+                             @Model.winner.UserName  
+                            } else{
+                                 @Html.Raw("NULL");
+                                }
+                                </td>
+                       
+                </tr>
+                 </tr>
+                    <tr>
+                    <td>Owner:</td>
+                    <td>@Model.owner.UserName
+                </tr>
+                 </tr>
+                    <tr>
+                    <td>Current price:</td>
+                    <td>  @Html.Raw("<span id='cena" + @Model.Id +"'>")  @Model.currentPrice  @Html.Raw("</div>") <span> din </span>  </td>
+                    
+                </tr>
+                
+            </table>
+        </div>
+         </div>
+ 
+
+    <div class = "row">
+        <div class = "col-sm-4"></div>
+        <div class="col-sm-3 d-flex justify-content-center ">
+            <h4>Bid here:</h4>
+        </div>
+    </div>
+       <div class = "row my-4">
+        <div class = "col-sm-3"></div>
+        <div class="col-sm-6 d-flex justify-content-center ">
+           <span id="badPrice"> </span>
+           <input type="hidden" id="flag" value=0 />
+        </div>
+    </div>
+      <div id ="bidovanje" class = "row">
+        <div class = "col-sm-4"></div>
+        <div class="col-sm-3 col-md-2 d-flex justify-content-center ">
+            <input id="auctionDetailsBid" type="number" placeholder="Your bid here..." id="maxPrice" min =0 >
+        </div>
+          <div class = "col-sm-1 d-flex justify-content-center ">
+             <a style="color:white"  id="@Model.Id" class="btn btn-success" onclick="bidAuctionDetails()" >BID</a>
+          </div>
+    </div>
+    <div class= "row">
+        <div class= "col d-flex justify-content-center">
+                 
+        </div>
+      
+    </div>
+        <div class= "row my-4"> 
+            <div class = "col-sm-3"></div>
+       <div class="col-sm-3 col-md-5 d-flex justify-content-center justify-content-md-start">
+           <h4>Description:
+               </h4>
+               
+        </div>
+    </div>
+        <div class= "row my-4"> 
+            <div class = "col-sm-3"></div>
+       <div class="col-sm-5 col-md-6 d-flex justify-content-center justify-content-md-start">
+            <span>
+                 @Model.description
+            </span>
+               
+        </div>
+        </div>
+        <div class= "row my-4"> 
+            <div class = "col-sm-3"></div>
+       <div class="col-sm-5 col-md-6 d-flex justify-content-center justify-content-md-start">
+           <h5>Last 5 users </h5>
+               
+        </div>
+        </div>
+            <div class= "row my-4"> 
+            <div class = "col-sm-3"></div>
+       <div class="col-sm-5 col-md-6 d-flex justify-content-center justify-content-md-start">
+              @foreach (var person in  ViewBag.userID)
+                {
+                    <p>@person.user.UserName</p>
+                }
+               
+               
+        </div>
+        </div>
+    
+
+
+
+        <div class = 'timeLeft'>
+             <input class= "hid" type="hidden" value="@Model.closeDate" />  @Html.Raw("<span class='timer' id='time"+ @Model.Id+"' > </span>");
+             
+        </div>
+</div>
+<script>
+
+
+ var x = setInterval(function() {
+   
+   var divs = document.getElementsByClassName('timeLeft');
+   
+        var i;
+ 
+      
+       var countDownDate = divs[0].getElementsByClassName('hid')[0].value;
+       var d = new Date(countDownDate);
+        d.setSeconds(d.getSeconds(),10000)
+       //alert(d);
+        var miliseconds = new Date(countDownDate).getTime();
+        var now = new Date().getTime();
+        //divs[0].getElementsByClassName('hid')[0].value = d;
+        // Get today's date and time
+  
+
+  // Find the distance between now and the count down date
+  var distance = miliseconds - now;
+  var newDate = new Date(distance);
+  //  alert(newDate)
+
+  
+    //alert(distance);
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="demo"
+  document.getElementById("timer").innerHTML = days + "d " + hours + "h "
+  + minutes + "m " + seconds + "s ";
+  var arr = document.getElementById("timer").textContent.split(" ")
+
+  //alert(parseInt(arr[1]))
+
+ 
+  
+  // If the count down is finished, write some text
+  if (distance < 0) {
+    clearInterval(x);
+   
+     document.getElementById("timer").innerHTML = "EXPIRED"
+     document.getElementById("forDisable").style.pointerEvents = "none"
+     document.getElementById("forDisable").style.opacity = "0.4"
+    
+    expired(id);
+     window.location.href = "https://localhost:5001/"
+  }
+    
+}, 1000); 
+</script>
+
+

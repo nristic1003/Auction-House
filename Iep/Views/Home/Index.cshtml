@@ -3,12 +3,16 @@
     string base64;
     int cnt = 0;
     int x = Model.Count;
+    string name="";
 }
+
 @{
     ViewData["Title"] = "Home Page";
 }
 
-        <link rel="stylesheet" href="~/css/auctionPreview.css" />
+@{
+    await Html.RenderPartialAsync("SignalRScriptsPartial");
+}
 
 <div class="row mb-2">
     <div class="col-sm-12">
@@ -18,14 +22,14 @@
 </div> 
 
 
-<form asp-action="Index" method="GET">
+<form class ="form-group" asp-action="Index" method="GET">
 <div class="row">
     
     <div class="col">
 <div class="container d-flex justify-content-center mb-2 ">
   
  <div class="input-group  input-group-lg">
-      <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]"placeholder="Type your text for search here..." style="width:100%;" />
+      <input class ="form-control " type="text" name="SearchString" value="@ViewData["CurrentFilter"]"placeholder="Type your text for search here..." style="width:100%;" />
      
        </div>
 </div>
@@ -56,18 +60,43 @@
          <div class="col-sm-5">
             <label align="center"> Price:</label>
             <div class="input-group input-group-sm">
-                <input type="number" name ="minPrice" id="minPrice" class = "mb-1" placeholder="min" min="0" style="width: 100px;">
+                <input type="number" name ="minPrice" value= "@ViewData["min"]" id="minPrice" class = "mb-1" placeholder="min" min="0" style="width: 100px;">
                 
-                 <input class = "input-sm" name="maxPrice" type="number" placeholder="max" id="maxPrice" min ="0" style="width: 100px;">
+                 <input class = "input-sm" name="maxPrice" value="@ViewData["max"]" type="number" placeholder="max" id="maxPrice" min ="0" style="width: 100px;">
             </div>
                <div class="input-group mb-3">
                 <label align="center"> State:</label>
                 <div class="input-group input-group-sm">
-                    <select  name = "state" class="custom-select" id="state" style="width: 100px;">
-                        <option selected>Choose...</option>
-                        <option value="1">READY</option>
-                        <option value="2">OPEN</option>
-                        <option value="3">EXPIRED</option>
+                    <select  name = "state"  class="custom-select" id="state" style="width: 100px;">
+                      @switch (ViewData["state"])
+                      {
+                          case "READY":{
+                           <option >Choose...</option>
+                            <option value="1" selected>READY</option>
+                            <option value="2">OPEN</option>
+                            <option value="3">EXPIRED</option>
+                          }break;
+                             case "OPEN":{
+                           <option >Choose...</option>
+                            <option value="1" >READY</option>
+                            <option value="2" selected>OPEN</option>
+                            <option value="3">EXPIRED</option>
+                          }break;
+                             case "EXPIRED":{
+                           <option >Choose...</option>
+                            <option value="1" selected>READY</option>
+                            <option value="2">OPEN</option>
+                            <option value="3" selected>EXPIRED</option>
+                          }break;
+                          default:{
+                            <option selected>Choose...</option>
+                            <option value="1">READY</option>
+                            <option value="2">OPEN</option>
+                            <option value="3">EXPIRED</option>
+                          }break;
+                      }
+                       
+                     
             
                     </select>
                 </div>
@@ -76,13 +105,18 @@
        
             </div>
         </div>
-
+  
+ </form>
         <div id= "test" class="col">
 
          
      <div class="container">
-    
+         
+         <div id ="userLog" class="ulogovan" style="text-align: left;">  
+          <input type="hidden" id="flag" value=0 />
+         </div>
 
+     
         @foreach (var item in Model)
         {
            
@@ -92,26 +126,42 @@
             {
                 @Html.Raw("<div class = 'row'>")
             }
-            cnt++;
-              @Html.Raw("<div class = 'col-md-3'>  <div class='d-flex justify-content-center'>")
+           
+              @Html.Raw("<div class = 'col-md-3 " + @cnt +" '>  <div class='d-flex justify-content-center'>")
+                   cnt++;
              @Html.Raw("<table class = 'table center' style = 'text-align:center'> <tr> <th>")
-                 @item.name
+               <a style="text-decoration:none;" asp-action ="auctionDetails" asp-route-id = "@item.Id"> @item.name</a> 
                     @Html.Raw("</th></tr><tr><td>")
                  <img src = "data:image/png;base64, @base64" width="200px" height="100px">
-                   @Html.Raw("</td></tr><tr><td>")
-                      @item.currentPrice <span> din</span>
-                @Html.Raw("</td></tr><tr><td>")
-                    @item.winner
-                      @Html.Raw("</td></tr><tr><td>")
-                           <input type="submit" value="BID" class="btn btn-success" />
+                   @Html.Raw("</td></tr><tr><td> <div class = 'timeLeft'>")
+                       <input class= "hid" type="hidden" value="@item.closeDate" />  @Html.Raw("<span class='timer' id='time"+ @item.Id+"' > </span>");
+                @Html.Raw("</div></td></tr><tr><td>")
+
+                  @Html.Raw("<div id='cena" + @item.Id +"'>") 
+                   @item.currentPrice  <span> din </span>
+                @Html.Raw("</div></td></tr><tr><td><div id='winner" + @item.Id +"'>")
+                  @Html.Raw("<div id='vreme" + @item.Id +"'>") 
+                         @Html.Raw("<input value='0' type='hidden' id='flag" + @cnt +"'>") 
+                      @Html.Raw("</div>")
+                 @if(@item.winner!=null)
+                 {
+                        @item.winner.UserName
+                 } else{
+                        @Html.Raw("NULL");
+                 }
+                    
+                      @Html.Raw("</div></td></tr><tr><td>")
+                           <a style="color:white" id = @item.Id  class="btn btn-success" onclick="bid()" >BID</a>
                             @Html.Raw("</td></tr></table>")
-                           
+                        
                    @Html.Raw("</div> </div>")
                 if(cnt%4==0 || cnt==x)
                 {
                       @Html.Raw("</div>")
                 }
         }
+           
+         
     @{
     var prevDisabled = !Model.PreviousPage ? "disabled": "";
      var nextDisabled = !Model.NextPage ? "disabled": "";
@@ -123,6 +173,9 @@
                     asp-route-sortOrder="@ViewData["CurrentSort"]"
                     asp-route-pageNumber="@(Model.PageIndex - 1)"
                     asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                    asp-route-minPrice = "@ViewData["minPrice"]"
+                     asp-route-maxPrice = "@ViewData["maxPrice"]"
+                     asp-route-state ="@ViewData["state"]"
                     class="btn btn-default @prevDisabled">
                         Previous
                 </a>
@@ -130,6 +183,9 @@
                     asp-route-sortOrder="@ViewData["CurrentSort"]"
                     asp-route-pageNumber="@(Model.PageIndex + 1)"
                     asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                     asp-route-minPrice = "@ViewData["minPrice"]"
+                     asp-route-maxPrice = "@ViewData["maxPrice"]"
+                       asp-route-state ="@ViewData["state"]"
                     class="btn btn-default @nextDisabled">
                         Next
                 </a>
@@ -145,5 +201,54 @@
         </div>
     </div>
 
+   
+
+    <script>
+         var divs = document.getElementsByClassName('timeLeft');
+   // Set the date we're counting down to
+   
+   
+
+// Update the count down every 1 second
+var x = setInterval(function() {
   
- </form>
+   var divs = document.getElementsByClassName('timeLeft');
+ var i;
+   for(i=0;i<divs.length;i++)
+    {
+     
+       var countDownDate = divs[i].getElementsByClassName('hid')[0].value;
+        var miliseconds = new Date(countDownDate).getTime();
+        var now = new Date().getTime();
+        // Get today's date and time
+  
+
+  // Find the distance between now and the count down date
+  var distance = miliseconds - now;
+    //alert(distance);
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="demo"
+  divs[i].getElementsByTagName("span")[0].innerHTML = days + "d " + hours + "h "
+  + minutes + "m " + seconds + "s ";
+
+  // If the count down is finished, write some text
+  if (distance < 0) {
+  clearInterval(x);
+    var y = ''+i;
+     document.getElementsByClassName(y)[0].style.pointerEvents = "none"
+    document.getElementsByClassName(y)[0].style.opacity = "0.4"
+    divs[i].getElementsByTagName("span")[0].innerHTML = "EXPIRED";
+    var id =divs[i].getElementsByTagName("span")[0].id;
+     var matches = id.match(/(\d+)/); 
+   // alert(matches[0]);
+    expired(matches[0]);
+  }
+    }
+}, 1000); 
+</script>
+

@@ -32,7 +32,7 @@ namespace Iep.Models.Database
         public ICollection<Auction> AuctionWinners {get; set;}
         public ICollection<Auction> AuctionOwners {get; set;}
     }
-     public class UserProfile : Profile  //Mapper klaasa :D
+     public class UserProfile : Profile  
     {
         public UserProfile()
         {
